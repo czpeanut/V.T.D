@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.appgarage.dash"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10" />
+
+    <!-- read the vehicle CAN signals (VS_ID_* sensors). protectionLevel=dangerous -> auto-granted on API 10 -->
+    <uses-permission android:name="com.ygomi.permission.IVI_CAN_READ" />
+
+    <application android:label="V.T.D." android:icon="@drawable/ic_launcher" android:allowBackup="true">
+        <!-- ivi.isDistractive=false => runningRestriction=0 => USABLE WHILE DRIVING.
+             (PackageParser defaults absent apps to 3 = restricted.) Matches DrivingPerformance. -->
+        <meta-data android:name="ivi.isDistractive"  android:value="false" />
+        <meta-data android:name="ivi.shortcut"       android:value="true" />
+        <meta-data android:name="ivi.audio"          android:value="false" />
+        <meta-data android:name="ivi.autorun"        android:value="false" />
+        <meta-data android:name="ivi.Disclaimer"     android:value="false" />
+        <meta-data android:name="ivi.supportDisplay" android:value="ALL" />
+        <meta-data android:name="ivi.defaultDisplay" android:value="LOWER" />
+
+        <!-- ==== LAUNCHER SWITCH ====
+             Exactly one of the activities below carries the MAIN/LAUNCHER
+             intent-filter. To change which screen the app opens on, move the
+             <intent-filter> block — nothing else needs to change. Every activity repeats
+             ivi.isDistractive="false" so the non-distractive flag travels with it whichever
+             level the InTouch PackageParser reads it from. -->
+
+        <!-- Driving screen. Launcher. Long-press opens the watcher. -->
+        <activity android:name=".DashActivity" android:label="V.T.D."
+                  android:icon="@drawable/ic_launcher"
+                  android:screenOrientation="landscape"
+                  android:keepScreenOn="true">
+            <meta-data android:name="ivi.isDistractive" android:value="false" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Settings. Reached by long-pressing the dash. -->
+        <activity android:name=".SettingsActivity" android:label="V.T.D."
+                  android:icon="@drawable/ic_launcher"
+                  android:screenOrientation="landscape"
+                  android:keepScreenOn="true">
+            <meta-data android:name="ivi.isDistractive" android:value="false" />
+        </activity>
+    </application>
+</manifest>

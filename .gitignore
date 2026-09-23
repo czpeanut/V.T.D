@@ -1,0 +1,15 @@
+# build artifacts
+build/
+_selftest/
+__pycache__/
+*.apk
+*.epk
+
+# app signing key — each builder generates their own
+keystore.ks
+
+# key material: publish ONLY the public OBU cert (needed to BUILD an .epk).
+# NEVER the private key (obu_key.pem) or the firmware p12.
+keys/*
+!keys/obu_cert.pem
+!keys/README.md
