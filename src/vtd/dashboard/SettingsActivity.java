@@ -1,4 +1,4 @@
-package com.appgarage.dash;
+package vtd.dashboard;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

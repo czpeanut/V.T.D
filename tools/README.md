@@ -5,8 +5,8 @@ The head unit's `AppManager` only loads apps from USB when they're wrapped in it
 decrypt and install.
 
 ```
-python tools/epk_tool.py build build/dash.apk build/dash.epk --cert keys/obu_cert.pem
-python tools/epk_tool.py parse dash.epk out/ --key keys/obu_key.pem     # verify
+python tools/epk_tool.py build build/vtd.apk build/vtd.epk --cert keys/obu_cert.pem
+python tools/epk_tool.py parse vtd.epk out/ --key keys/obu_key.pem     # verify
 python tools/epk_tool.py selftest                                       # round-trip test
 ```
 Requires `cryptography` (`pip install cryptography`).

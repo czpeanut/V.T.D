@@ -112,7 +112,7 @@ so little of the filesystem is reachable.
 
 ## Storage: writing works, retrieval is the problem
 
-`getFilesDir()` (`/data/data/com.appgarage.dash/files`) **is writable**. Nothing else found so
+`getFilesDir()` (`/data/data/vtd.dashboard/files`) **is writable**. Nothing else found so
 far is. On an unrooted Android 2.3 head unit with no file manager and no adb, that directory is
 readable only by this app, so a recording written there cannot be carried indoors.
 
@@ -125,7 +125,7 @@ probe re-runs on demand, so a stick plugged in after boot (or after the drive) i
 
 | Path | fs | Verdict |
 |---|---|---|
-| `/data/data/com.appgarage.dash/files` | ext4 | writable, **persistent**, unreachable from outside the app |
+| `/data/data/vtd.dashboard/files` | ext4 | writable, **persistent**, unreachable from outside the app |
 | `/mnt/sdcard` and below | **tmpfs** | writable, **RAM disk** — dies at power-off, a PC can never read it |
 | `/data/system/tmp` | **tmpfs** | same |
 | `/data/system/tmp/sdb1` | **vfat** | **this is the USB stick.** Mounted `rw`, but with `fmask=0022,dmask=0022` and owned by root, so this app may read it and cannot write to it |

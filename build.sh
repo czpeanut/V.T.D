@@ -24,7 +24,7 @@ rm -rf build && mkdir -p build/classes build/dex
 echo "== [1/6] javac (release 8) =="
 # -encoding UTF-8 is not optional: the sources carry CJK labels, and without it javac
 # silently decodes them with the platform default and the head unit shows mojibake.
-"$JAVAC" --release 8 -encoding UTF-8 -g -d build/classes -classpath "$ANDJAR" src/com/appgarage/dash/*.java
+"$JAVAC" --release 8 -encoding UTF-8 -g -d build/classes -classpath "$ANDJAR" src/vtd/dashboard/*.java
 echo "  compiled: $(find build/classes -name '*.class' | wc -l) classes"
 
 echo "== [2/6] d8 -> classes.dex (min-api 10) =="
@@ -35,26 +35,26 @@ echo "== [3/6] package APK (versionCode=$VC) =="
 # stamp versionCode into a temp manifest (aapt honors the manifest value; --version-code is a no-op here)
 sed "s/android:versionCode=\"[0-9]*\"/android:versionCode=\"$VC\"/" AndroidManifest.xml > build/AndroidManifest.xml
 # -A assets packages assets/ (car.png, the user-supplied car outline; optional at runtime)
-"$AAPT" package -f -M build/AndroidManifest.xml -S res -A assets -I "$ANDJAR" -F build/dash.unsigned.apk
-( cd build/dex && "$AAPT" add ../dash.unsigned.apk classes.dex >/dev/null )
+"$AAPT" package -f -M build/AndroidManifest.xml -S res -A assets -I "$ANDJAR" -F build/vtd.unsigned.apk
+( cd build/dex && "$AAPT" add ../vtd.unsigned.apk classes.dex >/dev/null )
 
 echo "== [4/6] zipalign =="
-"$ZIPALIGN" -f -p 4 build/dash.unsigned.apk build/dash.aligned.apk
+"$ZIPALIGN" -f -p 4 build/vtd.unsigned.apk build/vtd.aligned.apk
 
 echo "== [5/6] sign (v1 for API 10) =="
 # keystore lives outside build/ so it survives `rm -rf build` -> stable signature -> updates install over old
 if [ ! -f keystore.ks ]; then
-  "$KEYTOOL" -genkeypair -keystore keystore.ks -alias dash -keyalg RSA \
-    -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=AppGarageDash" >/dev/null 2>&1
+  "$KEYTOOL" -genkeypair -keystore keystore.ks -alias vtd -keyalg RSA \
+    -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=VTD" >/dev/null 2>&1
 fi
 "$APKSIGNER" sign --ks keystore.ks --ks-pass pass:android --key-pass pass:android \
   --min-sdk-version 10 --v1-signing-enabled true --v2-signing-enabled true \
-  --out build/dash.apk build/dash.aligned.apk
-"$APKSIGNER" verify --min-sdk-version 10 build/dash.apk >/dev/null 2>&1 && echo "  signature OK"
+  --out build/vtd.apk build/vtd.aligned.apk
+"$APKSIGNER" verify --min-sdk-version 10 build/vtd.apk >/dev/null 2>&1 && echo "  signature OK"
 
 echo "== [6/6] wrap into .epk (uses the public OBU cert in keys/obu_cert.pem) =="
 if [ -f tools/epk_tool.py ] && [ -f keys/obu_cert.pem ]; then
-  if ! python tools/epk_tool.py build build/dash.apk build/dash.epk --cert keys/obu_cert.pem; then
+  if ! python tools/epk_tool.py build build/vtd.apk build/vtd.epk --cert keys/obu_cert.pem; then
     echo "  .epk wrap failed — need Python 3 + 'pip install cryptography'. The APK is still ready."
   fi
 else
@@ -63,6 +63,6 @@ fi
 
 echo ""
 echo "== VERIFY =="
-"$AAPT" dump badging build/dash.apk 2>/dev/null | grep -iE "package:|sdkVersion|native-code|launchable" || true
-"$JAR" -tf build/dash.apk | grep -viE "META-INF/" | head
-echo "DONE -> build/dash.apk"; ls -l build/dash.apk build/dash.epk 2>/dev/null
+"$AAPT" dump badging build/vtd.apk 2>/dev/null | grep -iE "package:|sdkVersion|native-code|launchable" || true
+"$JAR" -tf build/vtd.apk | grep -viE "META-INF/" | head
+echo "DONE -> build/vtd.apk"; ls -l build/vtd.apk build/vtd.epk 2>/dev/null

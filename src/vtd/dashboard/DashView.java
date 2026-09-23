@@ -1,4 +1,4 @@
-package com.appgarage.dash;
+package vtd.dashboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;

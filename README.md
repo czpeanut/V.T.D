@@ -81,7 +81,7 @@ Needs JDK 17+, the Android SDK (`build-tools;34.0.0`, `platforms;android-34`), a
 
 ```
 export ANDROID_SDK=/path/to/android-sdk
-bash build.sh                 # -> build/dash.apk and build/dash.epk
+bash build.sh                 # -> build/vtd.apk and build/vtd.epk
 ```
 
 `build.sh` stamps the version code with the current unix time, because App Garage hides any
@@ -111,7 +111,7 @@ converts an ordinary light-on-black drawing into the keyed, tinted PNG the scree
 
 ### Installing
 
-1. Format a USB stick as **FAT32** and put `dash.epk` in its **root**.
+1. Format a USB stick as **FAT32** and put `vtd.epk` in its **root**.
 2. Insert it, wait for "Loading all apps" to finish (up to a minute from cold).
 3. From the home screen press **right** once to reach **App Garage**.
 4. **Install Apps via USB** → **V.T.D.** → confirm. Do not pull the stick until it completes.
