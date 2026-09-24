@@ -111,6 +111,9 @@ converts an ordinary light-on-black drawing into the keyed, tinted PNG the scree
 
 ### Installing
 
+Either build `vtd.epk` yourself with the steps above, or take it from
+[**Releases**](../../releases) — same file, already signed.
+
 1. Format a USB stick as **FAT32** and put `vtd.epk` in its **root**.
 2. Insert it, wait for "Loading all apps" to finish (up to a minute from cold).
 3. From the home screen press **right** once to reach **App Garage**.
