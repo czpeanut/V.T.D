@@ -110,6 +110,62 @@ with its own root on a read-only `tmpfs` and its partitions mounted from `/dev/m
 (`/system`) and `/dev/mmcblk0p9` (`/data`). App Garage apps are guests of a guest, which is why
 so little of the filesystem is reachable.
 
+## What else the platform offers an app (system survey)
+
+A throwaway read-only survey app (`tools/survey/` in the development repository) was run on the
+unit to answer three questions the sensor list could not.
+
+### `IVI_CAN_READ` is not enforced — there is no permission to "get more"
+
+A variant built **without** `com.ygomi.permission.IVI_CAN_READ`, and reporting it as `DENIED`,
+saw exactly the same **39 sensors, types 12–50, no gaps, all Ygomi**, and received live values
+from them (types 46 and 47, 56 events each). The permission is declarative on this firmware.
+So the inventory above is everything the Sensor API has: no missing permission would add
+state of charge or anything else.
+
+V.T.D. still declares it. It costs nothing, and other firmware may enforce it.
+
+The vendor permissions the platform defines, all `dangerous` and defined by the framework:
+`IVI_CAN_READ`, `IVI_MODIFY_STATE_AUDIO`, `IVI_MODIFY_STATE_DISPLAY`, `IVI_TITLEBAR`,
+`IVI_USE_NATIVE`, `IVI_USE_NAVIGATION` — plus a family of `com.ygomi.packageprovider.permission.*`
+guarding the app catalogue. `IVI_USE_NAVIGATION` and `IVI_MODIFY_STATE_DISPLAY` suggest APIs that
+have not been found yet.
+
+### `ivi.defaultDisplay=UPPER` does not move an app to the navigation screen
+
+The same variant declared `UPPER` at both application and activity level and opened on the
+lower screen anyway, with the map undisturbed above it.
+
+### The network: a phone link exists in the platform, and was down
+
+| Interface | Address | Peer | What it is |
+|---|---|---|---|
+| `navi0` | 169.254.10.1/24 | 169.254.10.2 | link to the host's navigation process |
+| `audio0` | 169.254.11.1/24 | 169.254.11.2 | link to the host's audio process |
+
+No default route, Wi-Fi disabled, and Android cannot see a Bluetooth adapter at all — the host
+Linux owns Bluetooth. `ConnectivityManager` lists the AOSP types plus a vendor type, **`ivi`**,
+which was `DISCONNECTED` with a 12-hex-digit reason that has the shape of a device address. It
+is the obvious candidate for the phone data link the original InTouch apps used.
+
+Two results show deliberate local plumbing while that link is down:
+
+- `www.google.com` resolved to `224.0.0.1` in 1 ms — a placeholder answer, not a lookup
+- a TCP connection to `8.8.8.8:53` was refused in 9 ms despite there being no route, which
+  only something on the unit itself could do
+
+The common phone-tethering addresses (`192.168.44.1`, `192.168.43.1`, `172.20.10.1`) had no
+route. The platform also asks *"allow applications to access the network?"* on every boot —
+a system-wide switch for that boot, not a per-app grant. Bringing `ivi` up from a phone is the
+open question.
+
+### The factory software
+
+`com.connexis.*` (app store, apps manager, sync client, vehicle health, `wcspoller`) and
+`com.ygomi.*` (package provider, factory and OTA configuration, an NGTP telematics provider).
+Content providers exported without a read permission include `com.ygomi.FactoryConfigProvider`,
+`com.ygomi.OTAConfigProvider` and `com.ygomi.ngtp.ngtpprovider`; none has been queried.
+
 ## Storage: writing works, retrieval is the problem
 
 `getFilesDir()` (`/data/data/vtd.dashboard/files`) **is writable**. Nothing else found so
@@ -202,8 +258,9 @@ is exactly 255 × 0.25, confirming the TPMS raw value is already psi in quarter-
 | 49 | `VS_ID_MARKET` | 0.0 | 1.0 | region code |
 | 50 | `VS_ID_IOP_ILL` | 1.0 | 0.0 | |
 
-Rows 46/47 differ between two photographs of the same screen; the values above are whichever
-the sharper frame showed. Re-read them on the unit before relying on either.
+Rows 46/47: the `max` column differs between two photographs of the same screen and is still
+unresolved. Their live **values** are settled — the system survey read both as **1.0**, steady
+across 56 events each.
 
 ## Gear position while in D
 
