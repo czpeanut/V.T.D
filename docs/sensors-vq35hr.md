@@ -145,8 +145,10 @@ lower screen anyway, with the map undisturbed above it.
 
 No default route, Wi-Fi disabled, and Android cannot see a Bluetooth adapter at all — the host
 Linux owns Bluetooth. `ConnectivityManager` lists the AOSP types plus a vendor type, **`ivi`**,
-which was `DISCONNECTED` with a 12-hex-digit reason that has the shape of a device address. It
-is the obvious candidate for the phone data link the original InTouch apps used.
+which was `DISCONNECTED`. Its reason field is **the Bluetooth address of the owner's paired
+phone**, confirmed digit for digit against the phone's own settings. So the platform knows which
+phone it would take a data connection from; it is the phone data link the original InTouch apps
+used, and it was simply not up.
 
 Two results show deliberate local plumbing while that link is down:
 
