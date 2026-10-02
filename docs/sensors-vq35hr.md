@@ -158,8 +158,15 @@ Two results show deliberate local plumbing while that link is down:
 
 The common phone-tethering addresses (`192.168.44.1`, `192.168.43.1`, `172.20.10.1`) had no
 route. The platform also asks *"allow applications to access the network?"* on every boot —
-a system-wide switch for that boot, not a per-app grant. Bringing `ivi` up from a phone is the
-open question.
+a system-wide switch for that boot, not a per-app grant.
+
+**Standard Bluetooth tethering does not bring it up.** With *Bluetooth tethering* enabled on a
+current Android phone (Samsung), the phone saw no device connect, and the car's entry in the
+phone's Bluetooth settings offered no internet-sharing profile at all — the head unit does not
+present itself as a PAN client. Whatever `ivi` was built to ride on, it is not PAN. The likely
+candidates are dial-up networking (DUN), which current Android phones no longer offer, or a
+proprietary link through the discontinued InTouch companion app; neither has been confirmed.
+For practical purposes the phone data link is closed.
 
 ### The factory software
 
